@@ -1,4 +1,4 @@
-以下是基于此库写的一些小动画
+以下是基于此库写的一些小动画（gh-pages）
 
 * [克苏鲁怪物](https://r1ader.github.io/Rcanvas/demo_eye.html)
 
