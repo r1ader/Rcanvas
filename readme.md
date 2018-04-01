@@ -1,5 +1,5 @@
-ÒÔÏÂÊÇ»ùÓÚ´Ë¿âĞ´µÄÒ»Ğ©Ğ¡¶¯»­£¨gh-pages£©
+ä»¥ä¸‹æ˜¯åŸºäºæ­¤åº“å†™çš„ä¸€äº›å°åŠ¨ç”»ï¼ˆgh-pagesï¼‰
 
-* [¿ËËÕÂ³¹ÖÎï](https://r1ader.github.io/Rcanvas/demo_eye.html)
+* [å…‹è‹é²æ€ªç‰©](https://r1ader.github.io/Rcanvas/demo_eye.html)
 
 <a href="https://r1ader.github.io/Rcanvas/demo_eye.html"><img src="https://github.com/r1ader/Rcanvas/raw/master/img/eye.png" width = "300" height = "250" alt="Cthulhu"/></a>
