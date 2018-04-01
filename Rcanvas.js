@@ -1,10 +1,11 @@
 // document.write("<script language='javascript' src='js/Math.js'></script>");
 
-function test() {
-    var a = -1;
-    a = std_angle(a, Pi / 3);
-    console.log(a);
+function test(a) {
+    var cont=a||"test";
+    console.log(cont);
 }
+
+var canva;
 
 var board;
 
@@ -14,7 +15,19 @@ var defult_line_wid=2;
 
 var objects = new Array();
 
+var mousex = 0;
+var mousey = 0;
+
+var keyw = 0;   //是否按下W建
+var keya = 0;
+var keys = 0;
+var keyd = 0;
+var keyf = 0;
+
+var mouse_left = 0; //是否按下鼠标左键
+
 function focus_On(c) {
+    canva = c;
     board = c.getContext('2d');
 }
 
@@ -49,7 +62,20 @@ function __typeof__(objClass) {
         this.y += this.speed_y;
     }
 
+    function relocation_Point(x,y) {
+        this.x=x;
+        this.y=y;
+    }
+    
+    function roate_Point(form_pot,form_angle) {
+        var now_angle = Math.atan2(this.y-form_pot.y,this.x-form_pot.x);
+        var len = Rsqrt((this.y-form_pot.y)*(this.y-form_pot.y)+(this.x-form_pot.x)*(this.x-form_pot.x));
+        this.relocation(form_pot.x+Rcos(now_angle+form_angle)*len,form_pot.y+Rsin(now_angle+form_angle)*len)
+    }
+
     Point.prototype.update = update_Point;
+    Point.prototype.relocation = relocation_Point;
+    Point.prototype.roate = roate_Point;
 
     function add_Point(form_x, form_y) {
         objects[objects.length] = new Point(form_x, form_y);
@@ -57,9 +83,11 @@ function __typeof__(objClass) {
     }
 
     function draw_Point(form_point) {
-        board.fillStyle = this.color;
-        board.fillRect(form_point.x, form_point.y, 1, 1);
+        board.fillStyle = form_point.color;
+        board.fillRect(form_point.x, form_point.y, 2, 2);
     }
+    
+
 }
 //Definition of Point (End)
 
@@ -204,6 +232,44 @@ function __typeof__(objClass) {
 }
 //Definition of Square (End)
 
+//Definition of Circle (Begin)
+{
+    function Circle(form_point, form_radius) {
+        this.core_pot = Object.create(form_point);
+        this.radius = form_radius;
+        this.color = defult_color;
+        this.if_solid = false;
+        this.line_wid=defult_line_wid;
+    }
+
+    Circle.prototype.update = update_Circle;
+
+    function update_Circle() {
+        this.core_pot.update();
+    }
+
+    function add_Circle(form_point, form_radius) {
+        objects[objects.length] = new Circle(form_point, form_radius);
+        return objects[objects.length - 1];
+    }
+
+
+    function draw_Circle(form_ci) {
+        board.beginPath();
+        board.arc(form_ci.core_pot.x,form_ci.core_pot.y,form_ci.radius,0,2*Pi);
+        board.strokeStyle=form_ci.color;
+        board.fillStyle=form_ci.color;
+        board.lineWidth=form_ci.line_wid;
+        board.stroke();
+        if(form_ci.if_solid){
+            board.fill();
+        }
+    }
+}
+//Definition of Circle (End)
+
+
+
 function add_Object(form_obj) {
     objects[objects.length] = form_obj;
 }
@@ -220,6 +286,8 @@ function draw_Objects(draw_type) {
             draw_Triangle(objects[i]);
         if (object_tpy === 'Square' && (object_tpy === draw_type || draw_type === 'All'))
             draw_Square(objects[i]);
+        if (object_tpy === 'Circle' && (object_tpy === draw_type || draw_type === 'All'))
+            draw_Circle(objects[i]);
     }
 }
 
@@ -249,6 +317,10 @@ function update_Objects(update_type) {
         return Math.sin(form_a);
     }
 
+    function Rabs(form_a) {
+        return Math.abs(form_a);
+    }
+
     function Rsqrt(form_a) {
         return Math.sqrt(form_a);
     }
@@ -268,3 +340,62 @@ function update_Objects(update_type) {
     }
 }
 //Math Part (end)
+
+
+
+document.onkeydown = function (event) {
+    var e = e || event;
+//        console.log(e.keyCode);
+    var speed = 10;
+    if (e && e.keyCode == 87) { // 按 w
+        keyw = 1;
+    }
+    if (e && e.keyCode == 83) { // 按 s
+        keys = 1;
+    }
+    if (e && e.keyCode == 68) { // 按 d
+        keyd = 1;
+    }
+    if (e && e.keyCode == 65) { // 按 a
+        keya = 1;
+    }
+    if (e && e.keyCode == 70) { // 按 f
+        keyf = 1;
+    }
+
+};
+
+document.onkeyup = function (event) {
+    var e = e || event;
+    if (e && e.keyCode == 87) { // 松开 w
+        keyw = 0;
+    }
+    if (e && e.keyCode == 83) { // 松开 s
+        keys = 0;
+    }
+    if (e && e.keyCode == 68) { // 松开 d
+        keyd = 0;
+    }
+    if (e && e.keyCode == 65) { // 松开 a
+        keya = 0;
+    }
+    if (e && e.keyCode == 70) { // 按 f
+        keyf = 0;
+    }
+};
+
+document.onmousemove = function (e) {
+    e = e || window.event;
+    var rc = canva.getBoundingClientRect();
+    mousex = Math.floor(e.clientX - rc.left);//获取鼠标在canvsa中的坐标
+    mousey = Math.floor(e.clientY - rc.top);
+//        console.log(me.dir);
+};
+
+document.onmousedown = function (e) {
+    mouse_left = 1;
+};
+
+document.onmouseup = function (e) {
+    mouse_left = 0;
+};

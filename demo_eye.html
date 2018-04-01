@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="Rcanvas.js"></script>
+    <style>
+        #main {
+            border: 1px solid black;
+        }
+
+        .dir {
+            height: 50px;
+            width: 50px;
+            font-size: 50px;
+            /*background-color: aqua;*/
+
+        }
+    </style>
+</head>
+<body>
+<canvas id="main" width="1200" height="900"></canvas>
+</body>
+<script>
+    var c= document.getElementById('main');
+    focus_On(c);
+    draw_Background('black');
+    var tl = 0; //timeline;
+    var pot = add_Point(0,0);
+    var tri = new Array(211);
+    var tri_up = new Array(211);
+    var tri_down = new Array(211);
+    var left = new Array(111);
+    var left_up = new Array(111);
+    var left_down = new Array(111);
+    var eyes = new Array(20);
+    var snake = new Array(30);
+    var center = new Point(360,470);
+    var flow_y=50*Rsin(tl%800/800*Pi*2);
+    var hats = new Array(60);
+    var hats2 = new Array(60);
+    var hats3 = new Array(60);
+    var hats4 = new Array(60);
+    defult_color='white';
+
+
+    var eye_black = add_Circle(pot,70);
+    eye_black.if_solid=true;
+    for(var i=0;i<6;i++){
+        eyes[i]=add_Circle(pot,70*Rcos(Pi/2*i/10));
+        eyes[i].color='black';
+    }
+    for(var i=0;i<20;i++){
+        snake[i]=add_Triangle(pot,i<10?i:20-i,Pi*i/20);
+        snake[i].color='black';
+    }
+    var target = new Point(0,0);
+    var now = new Point(0,0);
+    var eye = function () {
+        {
+            eye_black.core_pot.relocation(400, 450 + flow_y);
+            if(mouse_left===1){
+                if(mousex>400) target.x=0;
+                else if(mousex>300) target.x=-1;
+                else if(mousex>200) target.x=-2;
+                else target.x=-3;
+
+                if(mousey>550 + flow_y) target.y=1;
+                else if(mousey>450 + flow_y) target.y=0;
+                else if(mousey>350 + flow_y) target.y=-1;
+                else target.y=-2;
+            }
+            else if (tl % 200 === 10) {
+                target.x = Rround(Math.random() * 3 - 3);
+                target.y = Rround(Math.random() * 4 - 2);
+            }
+            if (now.x < target.x) now.x++;
+            else if (now.x > target.x) now.x--;
+            if (now.y < target.y) now.y++;
+            else if (now.y > target.y) now.y--;
+        }
+        for(var i=0;i<6;i++){
+            eyes[i].core_pot.relocation(400+i*now.x ,450+flow_y+i*now.y);
+        }
+        for(var i=0;i<20;i++){
+            snake[i].core_pot.relocation(400+6*now.x ,450+flow_y+6*now.y+(i-10)*5);
+        }
+    };
+    defult_color='black';
+    for (var i=1;i<100;i++){
+        left[i] = add_Triangle(pot,i<10?9*i/1.7:(100-i)/1.7,Pi/100*i);
+        left_up[i] = add_Triangle(pot,i<10?9*i/3:(100-i)/3,Pi/100*i);
+        left_down[i] = add_Triangle(pot,i<10?9*i/2:(100-i)/2,Pi/100*i);
+    }
+    for (var i=1;i<200;i++){
+        tri[i] = add_Triangle(pot,i<20?9*i/1.2/2:(200-i)/1.2/2,Pi/200*i);
+
+        tri_up[i] = add_Triangle(pot,i<20?9*i/3/2:(200-i)/3/2,Pi/200*i);
+
+        tri_down[i] = add_Triangle(pot,i<20?9*i/2/2:(200-i)/2/2,Pi/200*i);
+    }
+    var wings = function () {
+        var pian = tl%300/300*Pi*2;
+        flow_y=50*Rsin(tl%800/800*Pi*2);
+        for (var i=1;i<200;i++){
+            var x=450+i*6/2;
+            var y=450+10*Rsin(2*Pi/200*i-pian)*(i*i/4000)+flow_y;
+            tri[i].core_pot.relocation(x,y);
+            if(tl>Rsqrt(i)*1.5)
+                tri[i].color ="white";
+
+            center.relocation(360,470+flow_y);
+            tri_up[i].core_pot.relocation(x,y);
+            tri_up[i].core_pot.roate(center,-Pi/8);
+            if(tl>Rsqrt(i)*1.5)
+                tri_up[i].color ="white";
+
+            tri_down[i].core_pot.relocation(x-i,y);
+            tri_down[i].core_pot.roate(center,Pi/4);
+            if(tl>Rsqrt(i)*1.5)
+                tri_down[i].color ="white";
+        }
+
+        for (var i=1;i<100;i++){
+            var x=300-i*6;
+            var y=450+10*Rsin(2*Pi/100*i-pian)*(i*i/1000)+flow_y;
+            left[i].core_pot.relocation(x+4*i,y);
+            if(tl>Rsqrt(i)*2)
+                left[i].color ="white";
+
+            center.relocation(400,450+flow_y);
+            left_up[i].core_pot.relocation(x+4*i,y);
+            left_up[i].core_pot.roate(center,Pi/5);
+            if(tl>Rsqrt(i)*2)
+                left_up[i].color ="white";
+
+            left_down[i].core_pot.relocation(x+5*i,y);
+            left_down[i].core_pot.roate(center,-Pi/4);
+            if(tl>Rsqrt(i)*2)
+                left_down[i].color ="white";
+        }
+    };
+
+    defult_color='white';
+    for(var i=0;i<50;i++){
+        hats[i] = add_Triangle(pot,50-i,Pi*(i-3)/50);
+        hats2[i] = add_Triangle(pot,50-i,Pi*(i-3)/50);
+        hats3[i] = add_Triangle(pot,50-i,Pi*(i-3)/50);
+        hats4[i] = add_Triangle(pot,50-i,Pi*(40-i)/50);
+    }
+    var hat = function () {
+        for(var i=0;i<50;i++){
+            hats[i].core_pot.relocation(400+i,360+flow_y-i*4);
+        }
+        for(var i=0;i<50;i++){
+            hats2[i].core_pot.relocation(360,360+flow_y-i*2);
+        }
+        for(var i=0;i<50;i++){
+            hats3[i].core_pot.relocation(440+2*i,360+flow_y-i*2);
+        }
+        for(var i=0;i<50;i++){
+            hats4[i].core_pot.relocation(400+i*0.5,550+flow_y+i*2);
+        }
+    };
+
+    function pr() {
+        tl++;
+        window.requestAnimationFrame(pr);
+        draw_Background('rgba(0,0,0,0.07)');
+        // draw_Background('black');
+        wings();
+        hat();
+        eye();
+        update_Objects();
+        draw_Objects();
+    }
+
+    // test();
+    pr();
+
+</script>
+
+
+</html>
