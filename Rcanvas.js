@@ -18,13 +18,16 @@ var objects = new Array();
 var mousex = 0;
 var mousey = 0;
 
-var keyw = 0;   //是否按下W建
+var keyw = 0;   //鏄惁鎸変笅W寤?
 var keya = 0;
 var keys = 0;
 var keyd = 0;
 var keyf = 0;
 
-var mouse_left = 0; //是否按下鼠标左键
+var mouse_left = 0; //鏄惁鎸変笅榧犳爣宸﹂敭
+
+var timeline=0;
+var timeline_top=10000;
 
 function focus_On(c) {
     canva = c;
@@ -329,6 +332,10 @@ function update_Objects(update_type) {
         return Math.round(form_a);
     }
 
+    function Rfloor(form_a) {
+        return Math.floor(form_a);
+    }
+
     function std_angle(form_agl, form_std) {
         while (form_agl < 0) {
             form_agl += form_std;
@@ -342,64 +349,87 @@ function update_Objects(update_type) {
 //Math Part (end)
 
 //bezier (begin)
-function PointOnCubicBezier( cp, t )
 {
-    var   ax, bx, cx;
-    var   ay, by, cy;
-    var   tSquared, tCubed;
-    var   result = new Point() ;
+    function PointOnCubicBezier(cp, t) {
+        var ax, bx, cx;
+        var ay, by, cy;
+        var tSquared, tCubed;
+        var result = new Point();
 
-    /*計算多項式係數*/
+        /*瑷堢畻澶氶爡寮忎總鏁?*/
 
-    cx = 3.0 * (cp[1].x - cp[0].x);
-    bx = 3.0 * (cp[2].x - cp[1].x) - cx;
-    ax = cp[3].x - cp[0].x - cx - bx;
+        cx = 3.0 * (cp[0].x);
+        bx = 3.0 * (cp[1].x - cp[0].x) - cx;
+        ax = 100 - cx - bx;
 
-    cy = 3.0 * (cp[1].y - cp[0].y);
-    by = 3.0 * (cp[2].y - cp[1].y) - cy;
-    ay = cp[3].y - cp[0].y - cy - by;
+        cy = 3.0 * (cp[0].y);
+        by = 3.0 * (cp[1].y - cp[0].y) - cy;
+        ay = 100 - cy - by;
 
-    /*計算位於參數值t的曲線點*/
+        /*瑷堢畻浣嶆柤鍙冩暩鍊紅鐨勬洸绶氶粸*/
 
-    tSquared = t * t;
-    tCubed = tSquared * t;
+        tSquared = t * t;
+        tCubed = tSquared * t;
 
-    result.x = (ax * tCubed) + (bx * tSquared) + (cx * t) + cp[0].x;
-    result.y = (ay * tCubed) + (by * tSquared) + (cy * t) + cp[0].y;
+        result.x = (ax * tCubed) + (bx * tSquared) + (cx * t) + 0;
+        result.y = (ay * tCubed) + (by * tSquared) + (cy * t) + 0;
 
-    return result;
-}
+        return result;
+    }
 
-function ComputeBezier(cp, numberOfPoints, curve )
-{
-    var   dt;
-    var   i;
+    function ComputeBezier(cp, numberOfPoints, curve) {
+        var dt;
+        var i;
+        var temp=new Array();
+        dt = 1.0 / (numberOfPoints*5 - 1);
 
-    dt = 1.0 / ( numberOfPoints - 1 );
-
-    for( i = 0; i < numberOfPoints; i++)
-        curve[i] = PointOnCubicBezier( cp, i*dt );
+        for (i = 0; i < numberOfPoints*5; i++) {
+            temp[i] = PointOnCubicBezier(cp, i * dt);
+            curve[Rfloor(temp[i].x)]=temp[i].y;
+        }
+    }
 }
 //bezier (end)
+
+//timeline (begin)
+{
+    var time_flash = function () {
+        timeline++;
+        if (timeline > 0) {
+        }
+        if (timeline > timeline_top)
+            timeline = 0;
+        // test.innerText = timeline;
+    };
+
+    var set_Timeline_top = function (a) {
+        timeline_top=a;
+    }
+}
+//timeline (end)
+
+function clog(a) {
+    console.log(a);
+}
 
 
 document.onkeydown = function (event) {
     var e = e || event;
 //        console.log(e.keyCode);
     var speed = 10;
-    if (e && e.keyCode == 87) { // 按 w
+    if (e && e.keyCode == 87) { // 鎸? w
         keyw = 1;
     }
-    if (e && e.keyCode == 83) { // 按 s
+    if (e && e.keyCode == 83) { // 鎸? s
         keys = 1;
     }
-    if (e && e.keyCode == 68) { // 按 d
+    if (e && e.keyCode == 68) { // 鎸? d
         keyd = 1;
     }
-    if (e && e.keyCode == 65) { // 按 a
+    if (e && e.keyCode == 65) { // 鎸? a
         keya = 1;
     }
-    if (e && e.keyCode == 70) { // 按 f
+    if (e && e.keyCode == 70) { // 鎸? f
         keyf = 1;
     }
 
@@ -407,19 +437,19 @@ document.onkeydown = function (event) {
 
 document.onkeyup = function (event) {
     var e = e || event;
-    if (e && e.keyCode == 87) { // 松开 w
+    if (e && e.keyCode == 87) { // 鏉惧紑 w
         keyw = 0;
     }
-    if (e && e.keyCode == 83) { // 松开 s
+    if (e && e.keyCode == 83) { // 鏉惧紑 s
         keys = 0;
     }
-    if (e && e.keyCode == 68) { // 松开 d
+    if (e && e.keyCode == 68) { // 鏉惧紑 d
         keyd = 0;
     }
-    if (e && e.keyCode == 65) { // 松开 a
+    if (e && e.keyCode == 65) { // 鏉惧紑 a
         keya = 0;
     }
-    if (e && e.keyCode == 70) { // 按 f
+    if (e && e.keyCode == 70) { // 鎸? f
         keyf = 0;
     }
 };
@@ -427,7 +457,7 @@ document.onkeyup = function (event) {
 document.onmousemove = function (e) {
     e = e || window.event;
     var rc = canva.getBoundingClientRect();
-    mousex = Math.floor(e.clientX - rc.left);//获取鼠标在canvsa中的坐标
+    mousex = Math.floor(e.clientX - rc.left);//鑾峰彇榧犳爣鍦╟anvsa涓殑鍧愭爣
     mousey = Math.floor(e.clientY - rc.top);
 //        console.log(me.dir);
 };
