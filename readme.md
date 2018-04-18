@@ -1,5 +1,16 @@
 
-* 2018/4/16  添加了贝塞尔曲线模块 
+ 
+
+
+
+## 文档请看--->[document.md](https://github.com/r1ader/Rcanvas/blob/master/document.md)
+
+
+更新日志：
+
+* 2018/4/16  添加了贝塞尔曲线模块
+
+
 
 以下是基于此库写的一些小动画
 
