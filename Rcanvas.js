@@ -55,15 +55,9 @@ function __typeof__(objClass) {
     function Point(form_x, form_y) {
         this.x = form_x;
         this.y = form_y;
-        this.speed_x = 0;
-        this.speed_y = 0;
         this.color = defult_color;
     }
 
-    function update_Point() {
-        this.x += this.speed_x;
-        this.y += this.speed_y;
-    }
 
     function relocation_Point(x,y) {
         this.x=x;
@@ -76,7 +70,6 @@ function __typeof__(objClass) {
         this.relocation(form_pot.x+Rcos(now_angle+form_angle)*len,form_pot.y+Rsin(now_angle+form_angle)*len)
     }
 
-    Point.prototype.update = update_Point;
     Point.prototype.relocation = relocation_Point;
     Point.prototype.roate = roate_Point;
 
@@ -104,13 +97,6 @@ function __typeof__(objClass) {
         this.color = defult_color;
     }
 
-    function update_Line() {
-        this.start_pot.update();
-        this.end_pot.update();
-    }
-
-    Line.prototype.update = update_Line;
-
     function add_Line(form_point_a, form_point_b) {
         objects[objects.length] = new Line(form_point_a, form_point_b);
         return objects[objects.length - 1];
@@ -136,19 +122,11 @@ function __typeof__(objClass) {
         this.core_pot = Object.create(form_point);
         this.side_len = form_side;
         this.dir = form_dir;
-        this.speed_dir = 0;
         this.color = defult_color;
         this.if_solid = false;
         this.line_wid=defult_line_wid;
     }
 
-    Triangle.prototype.update = update_Triangle;
-
-    function update_Triangle() {
-        this.core_pot.update();
-        this.dir += this.speed_dir;
-        this.dir = std_angle(this.dir, 2*Pi / 3);
-    }
 
     function add_Triangle(form_point, form_side, form_dir) {
         objects[objects.length] = new Triangle(form_point, form_side, form_dir);
@@ -187,18 +165,9 @@ function __typeof__(objClass) {
         this.core_pot = Object.create(form_point);
         this.side_len = form_side;
         this.dir = form_dir;
-        this.speed_dir = 0;
         this.color = defult_color;
         this.if_solid = false;
         this.line_wid=defult_line_wid;
-    }
-
-    Square.prototype.update = update_Square;
-
-    function update_Square() {
-        this.core_pot.update();
-        this.dir += this.speed_dir;
-        this.dir = std_angle(this.dir, Pi / 2);
     }
 
     function add_Square(form_point, form_side, form_dir) {
@@ -245,12 +214,6 @@ function __typeof__(objClass) {
         this.line_wid=defult_line_wid;
     }
 
-    Circle.prototype.update = update_Circle;
-
-    function update_Circle() {
-        this.core_pot.update();
-    }
-
     function add_Circle(form_point, form_radius) {
         objects[objects.length] = new Circle(form_point, form_radius);
         return objects[objects.length - 1];
@@ -291,15 +254,6 @@ function draw_Objects(draw_type) {
             draw_Square(objects[i]);
         if (object_tpy === 'Circle' && (object_tpy === draw_type || draw_type === 'All'))
             draw_Circle(objects[i]);
-    }
-}
-
-function update_Objects(update_type) {
-    update_type = update_type || 'All';
-    for (var i = 0; i < objects.length; i++) {
-        var object_tpy = __typeof__(objects[i]);
-        if (update_type === object_tpy || update_type === 'All')
-            objects[i].update();
     }
 }
 
