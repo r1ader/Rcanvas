@@ -29,6 +29,15 @@ var mouse_left = 0; //鏄惁鎸変笅榧犳爣宸﹂敭
 var timeline=0;
 var timeline_top=10000;
 
+var if_over_turn = false;
+
+
+function over_Turn() {
+    ctx.translate(0, 600);
+    ctx.scale(1, -1);
+    if_over_turn=!if_over_turn;
+}
+
 function focus_On(c) {
     canva = c;
     board = c.getContext('2d');
@@ -39,7 +48,7 @@ function draw_Background(color) {
     board.fillRect(0, 0, c.width, c.height);
 }
 
-function __typeof__(objClass) {
+function get_Type(objClass) {
     if (objClass !== undefined && objClass.constructor) {
         var strFun = objClass.constructor.toString();
         var className = strFun.substr(0, strFun.indexOf('('));
@@ -127,6 +136,13 @@ function __typeof__(objClass) {
         this.line_wid=defult_line_wid;
     }
 
+    Triangle.prototype.relocation = relocation_Triangle;
+
+    function relocation_Triangle(x,y) {
+        this.core_pot.x=x;
+        this.core_pot.y=y;
+    }
+
 
     function add_Triangle(form_point, form_side, form_dir) {
         objects[objects.length] = new Triangle(form_point, form_side, form_dir);
@@ -168,6 +184,13 @@ function __typeof__(objClass) {
         this.color = defult_color;
         this.if_solid = false;
         this.line_wid=defult_line_wid;
+    }
+
+    Square.prototype.relocation = relocation_Square;
+
+    function relocation_Square(x,y) {
+        this.core_pot.x=x;
+        this.core_pot.y=y;
     }
 
     function add_Square(form_point, form_side, form_dir) {
@@ -214,6 +237,13 @@ function __typeof__(objClass) {
         this.line_wid=defult_line_wid;
     }
 
+    Circle.prototype.relocation = relocation_Circle;
+    
+    function relocation_Circle(x,y) {
+        this.core_pot.x=x;
+        this.core_pot.y=y;
+    }
+
     function add_Circle(form_point, form_radius) {
         objects[objects.length] = new Circle(form_point, form_radius);
         return objects[objects.length - 1];
@@ -243,7 +273,7 @@ function add_Object(form_obj) {
 function draw_Objects(draw_type) {
     draw_type = draw_type || 'All';
     for (var i = 0; i < objects.length; i++) {
-        var object_tpy = __typeof__(objects[i]);
+        var object_tpy = get_Type(objects[i]);
         if (object_tpy === 'Point' && (object_tpy === draw_type || draw_type === 'All'))
             draw_Point(objects[i]);
         if (object_tpy === 'Line' && (object_tpy === draw_type || draw_type === 'All'))
@@ -288,6 +318,10 @@ function draw_Objects(draw_type) {
 
     function Rfloor(form_a) {
         return Math.floor(form_a);
+    }
+
+    function Rceil(form_a) {
+        return Math.ceil(form_a);
     }
 
     function std_angle(form_agl, form_std) {
@@ -413,6 +447,9 @@ document.onmousemove = function (e) {
     var rc = canva.getBoundingClientRect();
     mousex = Math.floor(e.clientX - rc.left);//鑾峰彇榧犳爣鍦╟anvsa涓殑鍧愭爣
     mousey = Math.floor(e.clientY - rc.top);
+    if(if_over_turn){
+        mousey=c.height-mousey;
+    }
 //        console.log(me.dir);
 };
 
